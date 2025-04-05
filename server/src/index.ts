@@ -1,9 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { AppDataSource } from './config/typeorm.config';
 
-// Load environment variables
+// Load environment variables first
 dotenv.config();
 
 // Initialize Express app
@@ -13,22 +12,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Initialize TypeORM
-AppDataSource.initialize()
-  .then(() => {
-    console.log('Data Source has been initialized!');
-  })
-  .catch((err: Error) => {
-    console.error('Error during Data Source initialization:', err);
-  });
-
-// Basic route
+// Basic test route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Food Stash API' });
 });
 
-// Start server
+// Get the port from environment variables or default to 3000
 const PORT = process.env.PORT || 5000;
+
+// Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-}); 
+});
