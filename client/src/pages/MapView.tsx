@@ -149,7 +149,7 @@ const MapView: React.FC = () => {
               }`}
               onClick={handleOptimizeRoute}
             >
-
+              Show Optimized Route
             </button>
             {showOptimizedRoute && (
               <button
@@ -222,25 +222,6 @@ const MapView: React.FC = () => {
         </APIProvider>
       </div>
       
-      {showOptimizedRoute && (
-        <div className="bg-white p-4 shadow-md">
-          <h2 className="text-xl font-bold mb-2">Optimized Pickup Schedule</h2>
-          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
-            {optimizedSchedule.map((donor) => (
-              <div key={donor.name} className="p-3 border rounded shadow-sm">
-                <div className="flex items-center">
-                  <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold mr-2">
-                    {donor.order}
-                  </div>
-                  <strong>{donor.name}</strong>
-                </div>
-                <div className="text-sm text-gray-600">Scheduled: {donor.scheduledPickup}</div>
-                <div className="text-sm text-gray-600">Preferred: {donor.pickupTime}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
