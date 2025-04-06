@@ -27,3 +27,34 @@ export const getDonors = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch donors' });
   }
 };
+
+export const updateDonor = async (req, res) => {
+  try {
+    const { id, date, pickupTime } = req.body;
+
+    if (!id || !date || !pickupTime) {
+      return res.status(400).json({ error: 'Missing required fields: id, date, pickupTime' });
+    }
+
+    const query = `
+      UPDATE donors 
+      SET date = $1, pickup_time = $2
+      WHERE id = $3
+      RETURNING *;
+    `;
+    const values = [date, pickupTime, id];
+
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Donor not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating donor:', error);
+    res.status(500).json({ error: 'Failed to update donor' });
+  }
+};
+
+
