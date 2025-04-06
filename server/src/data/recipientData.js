@@ -1,0 +1,42 @@
+export const recipients = [
+    {
+      name: "Downtown Community Kitchen",
+      address: "123 Main St, Vancouver, BC",
+      longitude: -123.1152,
+      latitude: 49.2827,
+      date: "2025-04-08",
+      dropoffTime: "",
+    },
+    {
+      name: "West End Food Hub",
+      address: "456 Robson St, Vancouver, BC",
+      longitude: -123.1234,
+      latitude: 49.2876,
+      date: "2025-04-08",
+      dropoffTime: "",
+    },
+    {
+      name: "Eastside Women’s Shelter",
+      address: "789 Commercial Dr, Vancouver, BC",
+      longitude: -123.0728,
+      latitude: 49.2765,
+      date: "2025-04-08",
+      dropoffTime: "",
+    },
+    {
+      name: "UBC Food Bank",
+      address: "6138 Student Union Blvd, Vancouver, BC",
+      longitude: -123.2459,
+      latitude: 49.2662,
+      date: "2025-04-08",
+      dropoffTime: "",
+    },
+    {
+      name: "South Vancouver Neighbourhood House",
+      address: "6470 Victoria Dr, Vancouver, BC",
+      longitude: -123.0650,
+      latitude: 49.2220,
+      date: "2025-04-08",
+      dropoffTime: "",
+    },
+  ];
