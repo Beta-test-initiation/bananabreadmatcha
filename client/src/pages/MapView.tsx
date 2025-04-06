@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import React, { useState } from 'react';
+import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react-google-maps';
 
-// Fix for default marker icons in Leaflet with React
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-});
+const apiKey = "AIzaSyAvAe-i8pMrp3_2vVbdhjEdHY05Ro1ZOnE";
+
+const containerStyle = {
+  width: '100%',
+  height: '500px',
+};
+
+const center = {
+  lat: 49.26869788991187,
+  lng: -123.0979434827872, // Food Stash Warehouse
+};
 
 interface Location {
   id: string;
@@ -71,34 +73,21 @@ const mockLocations: Location[] = [
   },
 ];
 
-const MapController: React.FC<{ center: [number, number] }> = ({ center }) => {
-  const map = useMap();
-  
-  useEffect(() => {
-    map.setView(center, 13);
-  }, [center, map]);
-  
-  return null;
-};
-
 const MapView: React.FC = () => {
-  const [locations, setLocations] = useState<Location[]>(mockLocations);
+  const [locations] = useState<Location[]>(mockLocations);
   const [selectedType, setSelectedType] = useState<'all' | 'donor' | 'recipient'>('all');
-  const [center] = useState<[number, number]>([49.2827, -123.1207]); // Vancouver coordinates
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
 
-  const filteredLocations = locations.filter(location => 
+  const filteredLocations = locations.filter(location =>
     selectedType === 'all' || location.type === selectedType
   );
 
-  const getMarkerIcon = (type: 'donor' | 'recipient') => {
-    return new L.Icon({
-      iconUrl: type === 'donor' 
-        ? '/markers/donor-marker.png'
-        : '/markers/recipient-marker.png',
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32],
-    });
+  const handleMarkerClick = (location: Location) => {
+    setSelectedLocation(location);
+  };
+
+  const handleInfoWindowClose = () => {
+    setSelectedLocation(null);
   };
 
   return (
@@ -106,7 +95,7 @@ const MapView: React.FC = () => {
       <div className="bg-white shadow-md p-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold mb-4">Food Stash Map</h1>
-          
+
           <div className="flex space-x-4">
             <button
               className={`px-4 py-2 rounded-md ${
@@ -141,38 +130,46 @@ const MapView: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="flex-1">
-        <MapContainer
-          center={center}
-          zoom={13}
-          style={{ height: '100%', width: '100%' }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          
-          <MapController center={center} />
-          
-          {filteredLocations.map(location => (
-            <Marker
-              key={location.id}
-              position={[location.latitude, location.longitude]}
-              icon={getMarkerIcon(location.type)}
-            >
-              <Popup>
+        <APIProvider apiKey={apiKey}>
+          <Map
+            mapId={'DEMO_MAP_ID'}
+            defaultZoom={13}
+            defaultCenter={center}
+            style={containerStyle}
+          >
+            {filteredLocations.map(location => (
+              <AdvancedMarker
+                key={location.id}
+                position={{ lat: location.latitude, lng: location.longitude }}
+                title={location.name}
+                onClick={() => handleMarkerClick(location)}
+              >
+                <Pin
+                  background={location.type === 'donor' ? '#4CAF50' : '#2196F3'}
+                  glyphColor={'#fff'}
+                  borderColor={'#000'}
+                />
+              </AdvancedMarker>
+            ))}
+
+            {selectedLocation && (
+              <InfoWindow
+                position={{ lat: selectedLocation.latitude, lng: selectedLocation.longitude }}
+                onCloseClick={handleInfoWindowClose}
+              >
                 <div className="p-2">
-                  <h3 className="font-bold text-lg">{location.name}</h3>
-                  {location.organization && (
-                    <p className="text-gray-600">{location.organization}</p>
+                  <h3 className="font-bold text-lg">{selectedLocation.name}</h3>
+                  {selectedLocation.organization && (
+                    <p className="text-gray-600">{selectedLocation.organization}</p>
                   )}
-                  
-                  {location.type === 'donor' && location.foodItems && (
+
+                  {selectedLocation.type === 'donor' && selectedLocation.foodItems && (
                     <div className="mt-2">
                       <h4 className="font-semibold">Available Food:</h4>
                       <ul className="list-disc list-inside">
-                        {location.foodItems.map((item, index) => (
+                        {selectedLocation.foodItems.map((item, index) => (
                           <li key={index}>
                             {item.name} - {item.quantity} {item.unit}
                             <br />
@@ -184,12 +181,12 @@ const MapView: React.FC = () => {
                       </ul>
                     </div>
                   )}
-                  
-                  {location.type === 'recipient' && location.foodRequests && (
+
+                  {selectedLocation.type === 'recipient' && selectedLocation.foodRequests && (
                     <div className="mt-2">
                       <h4 className="font-semibold">Food Requests:</h4>
                       <ul className="list-disc list-inside">
-                        {location.foodRequests.map((request, index) => (
+                        {selectedLocation.foodRequests.map((request, index) => (
                           <li key={index}>
                             {request.type} - {request.quantity} {request.unit}
                             <br />
@@ -203,21 +200,21 @@ const MapView: React.FC = () => {
                           </li>
                         ))}
                       </ul>
-                      {location.servingSize && (
+                      {selectedLocation.servingSize && (
                         <p className="mt-2 text-sm text-gray-600">
-                          Serving {location.servingSize} people
+                          Serving {selectedLocation.servingSize} people
                         </p>
                       )}
                     </div>
                   )}
                 </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+              </InfoWindow>
+            )}
+          </Map>
+        </APIProvider>
       </div>
     </div>
   );
 };
 
-export default MapView; 
+export default MapView;
