@@ -20,7 +20,7 @@ export const createDonor = async (req, res) => {
 
 export const getDonors = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM donors ORDER BY id');
+    const result = await pool.query('SELECT * FROM donors WHERE pickup_time != \'\'');
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching donors:', error);

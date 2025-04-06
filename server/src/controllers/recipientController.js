@@ -2,7 +2,7 @@ import pool from '../config/db.js';
 
 export const getRecipients = async (req, res) => {
     try {
-      const result = await pool.query('SELECT * FROM recipients ORDER BY id');
+      const result = await pool.query('SELECT * FROM recipients WHERE dropoff_time != \'\'');
       res.json(result.rows);
     } catch (error) {
       console.error('Error fetching recipients:', error);
