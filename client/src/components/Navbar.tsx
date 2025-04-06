@@ -12,7 +12,6 @@ const Navbar: React.FC = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
             <img src="/images/foodstash.png" alt="Logo" className="h-8 w-8 Header-branding-logo" />
-            {/* <span className="text-2xl font-bold text-primary-600">Food Stash</span> */}
             </Link>
           </div>
           
@@ -27,11 +26,8 @@ const Navbar: React.FC = () => {
             <Link to="/recipient-form" className="px-3 py-2 rounded-md text-gray-700 hover:text-primary-600">
               Request Food
             </Link>
-            <Link to="/map" className="px-3 py-2 rounded-md text-gray-700 hover:text-primary-600">
+            <Link to="/scheduler" className="px-3 py-2 rounded-md text-gray-700 hover:text-primary-600">
               Schedule
-            </Link>
-            <Link to="/map-scheduler" className="px-3 py-2 rounded-md text-gray-700 hover:text-primary-600">
-              MapScheduler
             </Link>
           </div>
           

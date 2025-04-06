@@ -1,0 +1,42 @@
+export const recipients = [
+    {
+      name: "Roman Catholic Archdiocese of Vancouver",
+      address: "4885 St John Paul II Way",
+      longitude: -123.1231580046818,
+      latitude: 49.241964297554475,
+      date: "2025-04-08",
+      dropoffTime: "Morning",
+    },
+    {
+      name: "CityReach Care Society",
+      address: "2650 Slocan St",
+      longitude: -123.04906716050338,
+      latitude: 49.260881620580555,
+      date: "2025-04-08",
+      dropoffTime: "Afternoon",
+    },
+    {
+      name: "Community Builders Group",
+      address: "1130 W Pender St",
+      longitude: -123.12160120283089,
+      latitude: 49.28776359193603,
+      date: "2025-04-08",
+      dropoffTime: "",
+    },
+    {
+      name: "Mission Possible",
+      address: "648 E Hastings St",
+      longitude: -123.0905232316667,
+      latitude: 49.28126265524998,
+      date: "2025-04-08",
+      dropoffTime: "",
+    },
+    {
+      name: "Directions Youth Services",
+      address: "1138 Burrard St",
+      longitude: -123.12802498748951,
+      latitude: 49.27974605337525,
+      date: "2025-04-08",
+      dropoffTime: "",
+    },
+  ];

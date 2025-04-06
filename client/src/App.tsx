@@ -1,7 +1,6 @@
 import Scheduler from './pages/Scheduler';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
-import Dashboard from './pages/Dashboard';
 import DonorForm from './pages/DonorForm';
 import HomePage from './pages/HomePage';
 import MapView from './pages/MapView';
@@ -23,8 +22,7 @@ const App: React.FC = () => {
           <Route path="/donor-form" element={<DonorForm />} />
           <Route path="/recipient-form" element={<RecipientForm />} />
           <Route path="/map" element={<MapView />} />
-          <Route path="/map-scheduler" element={<MapScheduler />} />
-          <Route path="/scheduler" element={< Scheduler/>} />
+          <Route path="/scheduler" element={< MapScheduler/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

@@ -8,6 +8,10 @@
   }
 }
 
+.Header-branding-logo {
+  width: 100%;
+}
+
 .gm-ui-hover-effect {
   display: none !important;
 }
