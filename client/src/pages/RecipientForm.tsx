@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Keep original data structures without emojis
 const recipients = [
-  'Community Kitchen',
+  'CityReach Care Society',
   'Food Bank',
   'Shelter House',
   'Local Soup Kitchen',
@@ -34,17 +34,37 @@ const IconClock = () => (
 const RecipientForm: React.FC = () => {
   const [selectedRecipient, setSelectedRecipient] = useState('');
   const [selectedDelivery, setSelectedDelivery] = useState('');
+  const [selectedDate, setSelectedDate] = useState('2025-04-10'); // Default date
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate sending data to a database
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    // Build the payload using the recipient name, date, and delivery time.
+    const payload = {
+      name: selectedRecipient,
+      date: selectedDate,
+      dropoffTime: selectedDelivery.toLowerCase(),
+    };
+
+    try {
+      const response = await fetch('http://localhost:80/recipients/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // Optionally process response data here
       setSubmitted(true);
-    }, 2000);
+    } catch (error) {
+      console.error('Error updating recipient:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Time of day icon selector
@@ -197,10 +217,7 @@ const RecipientForm: React.FC = () => {
               <h2 className="text-2xl font-bold text-white relative z-10">Recipient Preferences</h2>
             </div>
 
-            <motion.form
-              onSubmit={handleSubmit}
-              className="p-6"
-            >
+            <motion.form onSubmit={handleSubmit} className="p-6">
               {/* Recipient Dropdown */}
               <div className="mb-6">
                 <label className="block mb-2 font-semibold text-gray-700 flex items-center gap-2">
@@ -230,6 +247,19 @@ const RecipientForm: React.FC = () => {
                     </svg>
                   </div>
                 </motion.div>
+              </div>
+
+              {/* Date Picker */}
+              <div className="mb-6">
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Select Date
+                </label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-full p-3 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+                />
               </div>
 
               {/* Delivery Time Radio Buttons */}

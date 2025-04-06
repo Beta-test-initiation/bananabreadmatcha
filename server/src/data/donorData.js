@@ -5,7 +5,7 @@ export const donors = [
       longitude: 49.229350,
       latitude: -123.091058,
       date: '2025-04-06',
-      pickupTime: '',
+      pickupTime: "Afternoon",
     },
     {
       name: 'Choices Markets',
@@ -13,7 +13,7 @@ export const donors = [
       longitude: -123.1683717,
       latitude: 49.257925,
       date: '2025-04-07',
-      pickupTime: '',
+      pickupTime: 'Evening',
     },
     {
       name: 'Whole Foods Market',
@@ -21,7 +21,7 @@ export const donors = [
       longitude: -123.1596357,
       latitude: 49.2683646,
       date: '2025-04-07',
-      pickupTime: '',
+      pickupTime: 'Morning',
     },
     {
       name: 'Fresh Direct Produce',
