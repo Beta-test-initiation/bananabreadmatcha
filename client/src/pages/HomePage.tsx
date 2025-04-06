@@ -184,7 +184,7 @@ const HomePage = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2 text-center text-orange-600">Donate Food</h3>
               <p className="text-gray-600 text-center">
-                Register as a donor and submit information about your surplus food, including type, quantity, and pickup location.
+                Register as a donor and submit information about your donation availabilities and best times for Food Stash volunteers to pick up.
               </p>
               
               {/* Decorative corner */}
@@ -221,7 +221,7 @@ const HomePage = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2 text-center text-purple-600">Optimize Routes</h3>
               <p className="text-gray-600 text-center">
-                Our system generates optimal pickup and delivery routes based on food perishability, location, and timing.
+                Our system generates optimal pickup and delivery routes based on date, location, and time of day.
               </p>
               
               {/* Decorative corner */}
@@ -259,7 +259,7 @@ const HomePage = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2 text-center text-teal-600">Deliver Food</h3>
               <p className="text-gray-600 text-center">
-                Food Stash employees pick up and deliver food to recipients, ensuring it reaches those in need efficiently.
+                Food Stash volunteers pick up and deliver food to community partners, ensuring it reaches those in need efficiently.
               </p>
               
               {/* Decorative corner */}
