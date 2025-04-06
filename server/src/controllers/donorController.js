@@ -29,20 +29,21 @@ export const getDonors = async (req, res) => {
 };
 
 export const updateDonor = async (req, res) => {
+  console.log("Received update req:", req.body);
   try {
-    const { id, date, pickupTime } = req.body;
+    const { name, date, pickupTime } = req.body;
 
-    if (!id || !date || !pickupTime) {
+    if (!name || !date || !pickupTime) {
       return res.status(400).json({ error: 'Missing required fields: id, date, pickupTime' });
     }
 
     const query = `
       UPDATE donors 
       SET date = $1, pickup_time = $2
-      WHERE id = $3
+      WHERE name = $3
       RETURNING *;
     `;
-    const values = [date, pickupTime, id];
+    const values = [date, pickupTime, name];
 
     const result = await pool.query(query, values);
 

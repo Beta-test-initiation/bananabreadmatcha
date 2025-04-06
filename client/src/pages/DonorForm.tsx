@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Keep original data structures without emojis
+// Donor names (for the dropdown)
 const donors = [
   'Downtown Deli',
   'Uptown Market',
@@ -14,6 +14,7 @@ const donors = [
   'Suburban Supply',
 ];
 
+// Pickup time options
 const pickupTimes = ['Morning', 'Afternoon', 'Evening', 'Night'];
 
 // SVG icons for the form
@@ -34,17 +35,40 @@ const IconClock = () => (
 const DonorForm: React.FC = () => {
   const [selectedDonor, setSelectedDonor] = useState('');
   const [selectedPickup, setSelectedPickup] = useState('');
+  const [selectedDate, setSelectedDate] = useState('2025-04-10'); // Default date; you can change as needed.
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate sending data to a database
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    // Convert donor name to an ID (using the array index + 1)
+    const donorId = donors.indexOf(selectedDonor) + 1;
+
+    // Build the payload in the desired format
+    const payload = {
+      id: donorId,
+      date: selectedDate,
+      pickupTime: selectedPickup.toLowerCase(),
+    };
+
+    try {
+      const response = await fetch('http://localhost:80/donors/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // You can optionally process response data here
       setSubmitted(true);
-    }, 2000);
+    } catch (error) {
+      console.error('Error updating donor:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Time of day icon selector
@@ -162,7 +186,6 @@ const DonorForm: React.FC = () => {
             exit={{ opacity: 0, y: 20 }}
             className="bg-white rounded-xl shadow-lg overflow-hidden w-full max-w-md relative z-10"
           >
-            {/* Cute header with illustrations */}
             <div className="bg-green-500 p-6 text-center relative overflow-hidden">
               <motion.div 
                 className="absolute top-4 left-4 text-white opacity-30"
@@ -196,11 +219,7 @@ const DonorForm: React.FC = () => {
               </motion.div>
               <h2 className="text-2xl font-bold text-white relative z-10">Donor Preferences</h2>
             </div>
-
-            <motion.form
-              onSubmit={handleSubmit}
-              className="p-6"
-            >
+            <motion.form onSubmit={handleSubmit} className="p-6">
               {/* Donor Dropdown */}
               <div className="mb-6">
                 <label className="block mb-2 font-semibold text-gray-700 flex items-center gap-2">
@@ -231,7 +250,18 @@ const DonorForm: React.FC = () => {
                   </div>
                 </motion.div>
               </div>
-
+              {/* Date Picker */}
+              <div className="mb-6">
+                <label className="block mb-2 font-semibold text-gray-700">
+                  Select Date
+                </label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-full p-3 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+              </div>
               {/* Pickup Time Radio Buttons */}
               <div className="mb-6">
                 <label className="block mb-3 font-semibold text-gray-700 flex items-center gap-2">
@@ -266,7 +296,6 @@ const DonorForm: React.FC = () => {
                   ))}
                 </div>
               </div>
-
               {/* Fun interactive donation image */}
               <motion.div 
                 className="mb-6 bg-green-50 p-4 rounded-lg border border-green-100 relative"
@@ -311,7 +340,6 @@ const DonorForm: React.FC = () => {
                 </div>
                 <p className="text-center text-sm text-green-700 mt-2">Thank you for your generous donation!</p>
               </motion.div>
-
               {/* Submit Button */}
               <motion.button
                 type="submit"
