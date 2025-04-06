@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -10,7 +11,8 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-primary-600">Food Stash</span>
+            <img src="/images/foodstash.png" alt="Logo" className="h-8 w-8 Header-branding-logo" />
+            {/* <span className="text-2xl font-bold text-primary-600">Food Stash</span> */}
             </Link>
           </div>
           
@@ -26,10 +28,10 @@ const Navbar: React.FC = () => {
               Request Food
             </Link>
             <Link to="/map" className="px-3 py-2 rounded-md text-gray-700 hover:text-primary-600">
-              Map View
+              Schedule
             </Link>
-            <Link to="/dashboard" className="px-3 py-2 rounded-md text-gray-700 hover:text-primary-600">
-              Dashboard
+            <Link to="/map-scheduler" className="px-3 py-2 rounded-md text-gray-700 hover:text-primary-600">
+              MapScheduler
             </Link>
           </div>
           
@@ -97,14 +99,7 @@ const Navbar: React.FC = () => {
               className="block px-3 py-2 rounded-md text-gray-700 hover:text-primary-600"
               onClick={() => setIsMenuOpen(false)}
             >
-              Map View
-            </Link>
-            <Link
-              to="/dashboard"
-              className="block px-3 py-2 rounded-md text-gray-700 hover:text-primary-600"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Dashboard
+              Schedule
             </Link>
           </div>
         </div>

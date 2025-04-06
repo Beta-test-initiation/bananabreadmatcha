@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import MapView from './pages/MapView';
 import NotFound from './pages/NotFound';
 import RecipientForm from './pages/RecipientForm';
+import MapScheduler from './pages/MapScheduler';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
@@ -22,7 +23,7 @@ const App: React.FC = () => {
           <Route path="/donor-form" element={<DonorForm />} />
           <Route path="/recipient-form" element={<RecipientForm />} />
           <Route path="/map" element={<MapView />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/map-scheduler" element={<MapScheduler />} />
           <Route path="/scheduler" element={< Scheduler/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
