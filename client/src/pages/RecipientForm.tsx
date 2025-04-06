@@ -1,488 +1,304 @@
+// src/pages/RecipientForm.tsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
-interface FoodRequest {
-  type: 'perishable' | 'non_perishable' | 'both';
-  quantity: number;
-  unit: string;
-  description: string;
-  urgency: 'low' | 'medium' | 'high';
-}
+// Keep original data structures without emojis
+const recipients = [
+  'Community Kitchen',
+  'Food Bank',
+  'Shelter House',
+  'Local Soup Kitchen',
+  'Neighborhood Center',
+];
+
+const deliveryTimes = ['Morning', 'Afternoon', 'Evening', 'Night'];
+
+// SVG icons for the form
+const IconFood = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+    <line x1="6" y1="1" x2="6" y2="4"></line>
+    <line x1="10" y1="1" x2="10" y2="4"></line>
+    <line x1="14" y1="1" x2="14" y2="4"></line>
+  </svg>
+);
+
+const IconClock = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+    <circle cx="12" cy="12" r="10"></circle>
+    <polyline points="12 6 12 12 16 14"></polyline>
+  </svg>
+);
 
 const RecipientForm: React.FC = () => {
-  const navigate = useNavigate();
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: '',
-    organizationName: '',
-    email: '',
-    phone: '',
-    address: '',
-    latitude: '',
-    longitude: '',
-    servingSize: '',
-    foodRequests: [] as FoodRequest[],
-  });
+  const [selectedRecipient, setSelectedRecipient] = useState('');
+  const [selectedDelivery, setSelectedDelivery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const [currentFoodRequest, setCurrentFoodRequest] = useState<FoodRequest>({
-    type: 'both',
-    quantity: 0,
-    unit: 'kg',
-    description: '',
-    urgency: 'medium',
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleFoodRequestChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setCurrentFoodRequest({
-      ...currentFoodRequest,
-      [name]: value,
-    });
-  };
-
-  const handleAddFoodRequest = () => {
-    setFormData({
-      ...formData,
-      foodRequests: [...formData.foodRequests, currentFoodRequest],
-    });
-    setCurrentFoodRequest({
-      type: 'both',
-      quantity: 0,
-      unit: 'kg',
-      description: '',
-      urgency: 'medium',
-    });
-  };
-
-  const handleRemoveFoodRequest = (index: number) => {
-    const updatedFoodRequests = [...formData.foodRequests];
-    updatedFoodRequests.splice(index, 1);
-    setFormData({
-      ...formData,
-      foodRequests: updatedFoodRequests,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // In a real application, you would send this data to your API
-    console.log('Form submitted:', formData);
-    
-    // Navigate to success page or map view
-    navigate('/map');
+    setIsSubmitting(true);
+    // Simulate sending data to a database
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }, 2000);
   };
 
-  const nextStep = () => {
-    setStep(step + 1);
-  };
-
-  const prevStep = () => {
-    setStep(step - 1);
+  // Time of day icon selector
+  const getTimeIcon = (time: string) => {
+    switch (time) {
+      case 'Morning':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-yellow-500">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        );
+      case 'Afternoon':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-orange-500">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+          </svg>
+        );
+      case 'Evening':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-indigo-500">
+            <path d="M17 18a5 5 0 0 0-10 0"></path>
+            <line x1="12" y1="2" x2="12" y2="9"></line>
+            <line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line>
+            <line x1="1" y1="18" x2="3" y2="18"></line>
+            <line x1="21" y1="18" x2="23" y2="18"></line>
+            <line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line>
+            <line x1="23" y1="22" x2="1" y2="22"></line>
+            <polyline points="8 6 12 2 16 6"></polyline>
+          </svg>
+        );
+      case 'Night':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-blue-800">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Request Food</h1>
-      
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div className={`flex-1 h-2 rounded-l-full ${step >= 1 ? 'bg-primary-600' : 'bg-gray-300'}`}></div>
-          <div className={`flex-1 h-2 ${step >= 2 ? 'bg-primary-600' : 'bg-gray-300'}`}></div>
-          <div className={`flex-1 h-2 rounded-r-full ${step >= 3 ? 'bg-primary-600' : 'bg-gray-300'}`}></div>
-        </div>
-        <div className="flex justify-between mt-2">
-          <span className={`text-sm ${step >= 1 ? 'text-primary-600 font-semibold' : 'text-gray-500'}`}>Recipient Info</span>
-          <span className={`text-sm ${step >= 2 ? 'text-primary-600 font-semibold' : 'text-gray-500'}`}>Food Requests</span>
-          <span className={`text-sm ${step >= 3 ? 'text-primary-600 font-semibold' : 'text-gray-500'}`}>Review</span>
-        </div>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="absolute w-full h-full overflow-hidden pointer-events-none">
+        {/* Decorative floating elements */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-orange-200 opacity-20"
+            style={{
+              width: Math.random() * 100 + 50,
+              height: Math.random() * 100 + 50,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              x: [0, 10, 0],
+            }}
+            transition={{
+              duration: Math.random() * 5 + 3,
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
       </div>
-      
-      <form onSubmit={handleSubmit}>
-        {step === 1 && (
-          <div className="card">
-            <h2 className="text-2xl font-semibold mb-6">Recipient Information</h2>
-            
-            <div className="form-group">
-              <label htmlFor="name" className="form-label">Full Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                className="input"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="organizationName" className="form-label">Organization Name (if applicable)</label>
-              <input
-                type="text"
-                id="organizationName"
-                name="organizationName"
-                className="input"
-                value={formData.organizationName}
-                onChange={handleInputChange}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="input"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="phone" className="form-label">Phone Number</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                className="input"
-                value={formData.phone}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="address" className="form-label">Delivery Address</label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                className="input"
-                value={formData.address}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="form-group">
-                <label htmlFor="latitude" className="form-label">Latitude</label>
-                <input
-                  type="text"
-                  id="latitude"
-                  name="latitude"
-                  className="input"
-                  value={formData.latitude}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 49.2827"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="longitude" className="form-label">Longitude</label>
-                <input
-                  type="text"
-                  id="longitude"
-                  name="longitude"
-                  className="input"
-                  value={formData.longitude}
-                  onChange={handleInputChange}
-                  placeholder="e.g., -123.1207"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="servingSize" className="form-label">Number of People to Serve</label>
-              <input
-                type="number"
-                id="servingSize"
-                name="servingSize"
-                className="input"
-                value={formData.servingSize}
-                onChange={handleInputChange}
-                min="1"
-                required
-              />
-            </div>
-            
-            <div className="flex justify-end mt-6">
-              <button
-                type="button"
-                onClick={nextStep}
-                className="btn btn-primary"
+
+      <AnimatePresence mode="wait">
+        {submitted ? (
+          <motion.div
+            key="submitted"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 15 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="p-8 bg-white rounded-xl shadow-lg text-center max-w-md w-full relative z-10"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
+              className="w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            </motion.div>
+            <h2 className="text-2xl font-bold text-orange-500 mb-4">Hooray!</h2>
+            <p className="text-gray-700 mb-6">Your preferences have been saved successfully!</p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSubmitted(false)}
+              className="px-6 py-2 bg-orange-400 text-white rounded-full font-medium hover:bg-orange-500 transition-colors"
+            >
+              Start Over
+            </motion.button>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="form-container"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="bg-white rounded-xl shadow-lg overflow-hidden w-full max-w-md relative z-10"
+          >
+            {/* Cute header with illustrations */}
+            <div className="bg-orange-400 p-6 text-center relative overflow-hidden">
+              <motion.div 
+                className="absolute top-4 left-4 text-white opacity-30"
+                animate={{ 
+                  y: [0, -10, 0],
+                  rotate: [0, 5, 0],
+                }}
+                transition={{ 
+                  duration: 4,
+                  repeat: Infinity,
+                }}
               >
-                Next
-              </button>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </motion.div>
+              <motion.div 
+                className="absolute bottom-4 right-4 text-white opacity-30"
+                animate={{ 
+                  y: [0, 10, 0],
+                  rotate: [0, -5, 0],
+                }}
+                transition={{ 
+                  duration: 3.5,
+                  repeat: Infinity,
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+              </motion.div>
+              <h2 className="text-2xl font-bold text-white relative z-10">Recipient Preferences</h2>
             </div>
-          </div>
-        )}
-        
-        {step === 2 && (
-          <div className="card">
-            <h2 className="text-2xl font-semibold mb-6">Food Requests</h2>
-            
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-4">Add Food Request</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="form-group">
-                  <label htmlFor="foodType" className="form-label">Food Type</label>
+
+            <motion.form
+              onSubmit={handleSubmit}
+              className="p-6"
+            >
+              {/* Recipient Dropdown */}
+              <div className="mb-6">
+                <label className="block mb-2 font-semibold text-gray-700 flex items-center gap-2">
+                  <IconFood />
+                  <span>Select Recipient</span>
+                </label>
+                <motion.div 
+                  className="relative"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
                   <select
-                    id="foodType"
-                    name="type"
-                    className="input"
-                    value={currentFoodRequest.type}
-                    onChange={handleFoodRequestChange}
-                    required
+                    value={selectedRecipient}
+                    onChange={(e) => setSelectedRecipient(e.target.value)}
+                    className="w-full p-3 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 pl-4 appearance-none bg-white text-gray-700"
                   >
-                    <option value="perishable">Perishable</option>
-                    <option value="non_perishable">Non-perishable</option>
-                    <option value="both">Both</option>
-                  </select>
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="urgency" className="form-label">Urgency Level</label>
-                  <select
-                    id="urgency"
-                    name="urgency"
-                    className="input"
-                    value={currentFoodRequest.urgency}
-                    onChange={handleFoodRequestChange}
-                    required
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="quantity" className="form-label">Quantity Needed</label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    className="input"
-                    value={currentFoodRequest.quantity}
-                    onChange={handleFoodRequestChange}
-                    min="0"
-                    step="0.01"
-                    required
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="unit" className="form-label">Unit</label>
-                  <select
-                    id="unit"
-                    name="unit"
-                    className="input"
-                    value={currentFoodRequest.unit}
-                    onChange={handleFoodRequestChange}
-                    required
-                  >
-                    <option value="kg">Kilograms (kg)</option>
-                    <option value="g">Grams (g)</option>
-                    <option value="l">Liters (L)</option>
-                    <option value="ml">Milliliters (mL)</option>
-                    <option value="pcs">Pieces</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="description" className="form-label">Description</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  className="input"
-                  rows={3}
-                  value={currentFoodRequest.description}
-                  onChange={handleFoodRequestChange}
-                  placeholder="Please provide any specific requirements or preferences"
-                ></textarea>
-              </div>
-              
-              <button
-                type="button"
-                onClick={handleAddFoodRequest}
-                className="btn btn-primary mt-4"
-              >
-                Add Food Request
-              </button>
-            </div>
-            
-            {formData.foodRequests.length > 0 && (
-              <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Added Food Requests</h3>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Urgency</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {formData.foodRequests.map((request, index) => (
-                        <tr key={index}>
-                          <td className="px-6 py-4 whitespace-nowrap capitalize">{request.type.replace('_', ' ')}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              request.urgency === 'high' ? 'bg-red-100 text-red-800' :
-                              request.urgency === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
-                              {request.urgency}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">{request.quantity} {request.unit}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveFoodRequest(index)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Remove
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-            
-            <div className="flex justify-between mt-6">
-              <button
-                type="button"
-                onClick={prevStep}
-                className="btn btn-outline"
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={nextStep}
-                className="btn btn-primary"
-                disabled={formData.foodRequests.length === 0}
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-        
-        {step === 3 && (
-          <div className="card">
-            <h2 className="text-2xl font-semibold mb-6">Review Information</h2>
-            
-            <div className="mb-8">
-              <h3 className="text-lg font-medium mb-4">Recipient Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Name</p>
-                  <p className="font-medium">{formData.name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Organization</p>
-                  <p className="font-medium">{formData.organizationName || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium">{formData.email}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Phone</p>
-                  <p className="font-medium">{formData.phone}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <p className="text-sm text-gray-500">Address</p>
-                  <p className="font-medium">{formData.address}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Location</p>
-                  <p className="font-medium">{formData.latitude}, {formData.longitude}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Serving Size</p>
-                  <p className="font-medium">{formData.servingSize} people</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mb-8">
-              <h3 className="text-lg font-medium mb-4">Food Requests</h3>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Urgency</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {formData.foodRequests.map((request, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap capitalize">{request.type.replace('_', ' ')}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            request.urgency === 'high' ? 'bg-red-100 text-red-800' :
-                            request.urgency === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {request.urgency}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">{request.quantity} {request.unit}</td>
-                        <td className="px-6 py-4">{request.description}</td>
-                      </tr>
+                    <option value="">-- Choose a Recipient --</option>
+                    {recipients.map((recipient, idx) => (
+                      <option key={idx} value={recipient}>
+                        {recipient}
+                      </option>
                     ))}
-                  </tbody>
-                </table>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </motion.div>
               </div>
-            </div>
-            
-            <div className="flex justify-between mt-6">
-              <button
-                type="button"
-                onClick={prevStep}
-                className="btn btn-outline"
-              >
-                Back
-              </button>
-              <button
+
+              {/* Delivery Time Radio Buttons */}
+              <div className="mb-6">
+                <label className="block mb-3 font-semibold text-gray-700 flex items-center gap-2">
+                  <IconClock />
+                  <span>Preferred Delivery Time</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {deliveryTimes.map((time) => (
+                    <motion.label 
+                      key={time} 
+                      className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
+                        selectedDelivery === time 
+                          ? 'border-orange-400 bg-orange-50' 
+                          : 'border-gray-200 hover:border-orange-200'
+                      }`}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <input
+                        type="radio"
+                        name="deliveryTime"
+                        value={time}
+                        checked={selectedDelivery === time}
+                        onChange={(e) => setSelectedDelivery(e.target.value)}
+                        className="form-radio text-orange-500 hidden"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="flex-shrink-0">{getTimeIcon(time)}</span>
+                        <span className="font-medium text-gray-700">{time}</span>
+                      </div>
+                    </motion.label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <motion.button
                 type="submit"
-                className="btn btn-primary"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                disabled={!selectedRecipient || !selectedDelivery || isSubmitting}
+                className={`w-full p-3 mt-4 rounded-lg text-white font-semibold transition-all ${
+                  !selectedRecipient || !selectedDelivery || isSubmitting
+                    ? 'bg-gray-300' 
+                    : 'bg-orange-400 hover:bg-orange-500'
+                }`}
               >
-                Submit
-              </button>
-            </div>
-          </div>
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 9.27455 20.9097 6.80375 19.1414 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </motion.span>
+                    Sending...
+                  </div>
+                ) : 'Submit'}
+              </motion.button>
+            </motion.form>
+          </motion.div>
         )}
-      </form>
+      </AnimatePresence>
     </div>
   );
 };
 
-export default RecipientForm; 
+export default RecipientForm;
