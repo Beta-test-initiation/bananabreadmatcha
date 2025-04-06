@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import donorRoutes from './routes/donors.js';
+import recipientRoutes from './routes/recipients.js';
 import { initializeDB } from './config/db.js';
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 
 // Donor routes
 app.use('/donors', donorRoutes);
+app.use('/recipients', recipientRoutes);
 
 // Get port from environment or default to 5000
 const PORT = process.env.PORT || 5000;
