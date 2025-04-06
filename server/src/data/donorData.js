@@ -2,8 +2,8 @@ export const donors = [
     {
       name: 'Buy-Low Foods',
       address: '6095 Fraser St',
-      longitude: 49.229350,
-      latitude: -123.091058,
+      longitude: -123.091058,
+      latitude: 49.257925,
       date: '2025-04-07',
       pickupTime: "Afternoon",
     },
