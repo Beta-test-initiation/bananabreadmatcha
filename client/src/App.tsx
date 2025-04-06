@@ -1,12 +1,12 @@
 import Scheduler from './pages/Scheduler';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
-import Dashboard from './pages/Dashboard';
 import DonorForm from './pages/DonorForm';
 import HomePage from './pages/HomePage';
 import MapView from './pages/MapView';
 import NotFound from './pages/NotFound';
 import RecipientForm from './pages/RecipientForm';
+import MapScheduler from './pages/MapScheduler';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
@@ -22,8 +22,7 @@ const App: React.FC = () => {
           <Route path="/donor-form" element={<DonorForm />} />
           <Route path="/recipient-form" element={<RecipientForm />} />
           <Route path="/map" element={<MapView />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/scheduler" element={< Scheduler/>} />
+          <Route path="/scheduler" element={< MapScheduler/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
