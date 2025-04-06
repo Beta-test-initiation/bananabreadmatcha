@@ -9,10 +9,8 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">Food Stash</h3>
-            <p className="text-gray-300">
-              Connecting food donors with recipients to reduce waste and feed those in need.
-            </p>
+          <p className="text-gray-300">
+          Food Stash Foundation operates on the unceded territories of the səl̓ilw̓ətaʔɬ (Tsleil-Waututh), Sḵwx̱wú7mesh (Squamish) and xʷməθkʷəy̓əm (Musqueam) Nations.            </p>
           </div>
           
           <div>
@@ -34,8 +32,8 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/map" className="text-gray-300 hover:text-white">
-                  Map View
+                <Link to="/scheduler" className="text-gray-300 hover:text-white">
+                  Schedule
                 </Link>
               </li>
             </ul>
@@ -44,9 +42,9 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Contact Us</h3>
             <ul className="space-y-2 text-gray-300">
-              <li>Email: info@foodstash.org</li>
-              <li>Phone: (555) 123-4567</li>
-              <li>Address: 123 Food Street, City, State 12345</li>
+              <li>Email: operations@foodstash.ca</li>
+              <li>Phone: (604) 862-9701</li>
+              <li>Our Warehouse: 100-290 E 1st Ave, City, Vancouver, BC V5T 1A65</li>
             </ul>
           </div>
         </div>
