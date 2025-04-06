@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react-google-maps';
 
 import { mockDonors } from '../utils/mockDonors';
@@ -13,7 +12,6 @@ const containerStyle = {
 };
 
 const warehouseLocation = {
-
   lat: 49.26869788991187,
   lng: -123.0979434827872, // Food Stash Warehouse
 };
@@ -35,24 +33,20 @@ const convertDonorsToLocations = (donors: ScheduledDonor[]): Location[] => {
     latitude: donor.location.lat,
     longitude: donor.location.lng
   }));
-
-
 };
 
 const MapView: React.FC = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedType, setSelectedType] = useState<'all' | 'donor' | 'recipient'>('all');
-
   const [showOptimizedRoute, setShowOptimizedRoute] = useState<boolean>(false);
   const [optimizedSchedule, setOptimizedSchedule] = useState<ScheduledDonor[]>([]);
+  const [isResetting, setIsResetting] = useState<boolean>(false);
 
   // Initialize the locations on component mount
-
   useEffect(() => {
     const { schedule } = getOptimizedSchedule(mockDonors);
     setLocations(convertDonorsToLocations(schedule));
   }, []);
-
 
   useEffect(() => {
     if (showOptimizedRoute) {
@@ -61,11 +55,9 @@ const MapView: React.FC = () => {
     }
   }, [showOptimizedRoute]);
 
-
   const filteredLocations = showOptimizedRoute 
     ? convertDonorsToLocations(optimizedSchedule)
     : locations.filter(location => selectedType === 'all' || location.type === selectedType);
-
 
   const handleOptimizeRoute = () => {
     setShowOptimizedRoute(true);
@@ -73,8 +65,15 @@ const MapView: React.FC = () => {
   };
 
   const handleResetView = () => {
-    setShowOptimizedRoute(false);
-    setSelectedType('all');
+    // Set temporary isResetting flag to avoid DOM manipulation issues
+    setIsResetting(true);
+    
+    // Use setTimeout to ensure we clear everything properly
+    setTimeout(() => {
+      setShowOptimizedRoute(false);
+      setSelectedType('all');
+      setIsResetting(false);
+    }, 0);
   };
 
   const findScheduledDonor = (location: Location): ScheduledDonor | undefined => {
@@ -90,16 +89,14 @@ const MapView: React.FC = () => {
       <div className="bg-white shadow-md p-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold mb-4">Food Stash Map</h1>
-
           
           <div className="flex space-x-4 mb-4">
             <button
               className={`px-4 py-2 rounded-md ${
                 selectedType === 'all' && !showOptimizedRoute
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-green-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
-
               onClick={() => {
                 setSelectedType('all');
                 setShowOptimizedRoute(false);
@@ -108,13 +105,11 @@ const MapView: React.FC = () => {
               All
             </button>
             <button
-
               className={`px-4 py-2 rounded-md ${
                 (selectedType === 'donor' && !showOptimizedRoute)
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-green-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
-
               onClick={() => {
                 setSelectedType('donor');
                 setShowOptimizedRoute(false);
@@ -123,13 +118,11 @@ const MapView: React.FC = () => {
               Donors
             </button>
             <button
-
               className={`px-4 py-2 rounded-md ${
                 selectedType === 'recipient' && !showOptimizedRoute
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-green-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
-
               onClick={() => {
                 setSelectedType('recipient');
                 setShowOptimizedRoute(false);
@@ -138,7 +131,6 @@ const MapView: React.FC = () => {
               Recipients
             </button>
           </div>
-
           
           <div className="flex space-x-4">
             <button
@@ -148,10 +140,11 @@ const MapView: React.FC = () => {
                   : 'bg-green-100 text-green-700 hover:bg-green-200'
               }`}
               onClick={handleOptimizeRoute}
+              disabled={isResetting}
             >
               Show Optimized Route
             </button>
-            {showOptimizedRoute && (
+            {showOptimizedRoute && !isResetting && (
               <button
                 className="px-4 py-2 rounded-md bg-red-100 text-red-700 hover:bg-red-200"
                 onClick={handleResetView}
@@ -168,7 +161,6 @@ const MapView: React.FC = () => {
             mapId={'DEMO_MAP_ID'}
             defaultZoom={13}
             defaultCenter={warehouseLocation}
-
             style={containerStyle}
           >
             {/* Warehouse marker */}
@@ -184,13 +176,14 @@ const MapView: React.FC = () => {
               />
             </AdvancedMarker>
             
-            {/* Location markers */}
-            {filteredLocations.map((location) => {
-
+            {/* Location markers - use key that changes when optimized state changes */}
+            {!isResetting && filteredLocations.map((location) => {
               const scheduledDonor = findScheduledDonor(location);
+              const markerKey = `${location.id}-${showOptimizedRoute ? 'optimized' : 'regular'}`;
+              
               return (
                 <AdvancedMarker
-                  key={location.id}
+                  key={markerKey}
                   position={{ lat: location.latitude, lng: location.longitude }}
                   title={location.name}
                 >
@@ -202,10 +195,10 @@ const MapView: React.FC = () => {
                         borderColor={'#000'} 
                       />
                       <InfoWindow
-                    position={{ lat: location.latitude, lng: location.longitude }}
-                  >
-                      <h3 className="font-bold text-lg">{scheduledDonor.order}</h3>
-                  </InfoWindow>
+                        position={{ lat: location.latitude, lng: location.longitude }}
+                      >
+                        <h3 className="font-bold text-lg">{scheduledDonor.order}</h3>
+                      </InfoWindow>
                     </div>
                   ) : (
                     <Pin 
@@ -214,14 +207,12 @@ const MapView: React.FC = () => {
                       borderColor={'#000'} 
                     />
                   )}
-
                 </AdvancedMarker>
               );
             })}
           </Map>
         </APIProvider>
       </div>
-      
     </div>
   );
 };
