@@ -17,6 +17,9 @@ const HomePage: React.FC = () => {
           <Link to="/recipient-form" className="btn bg-secondary-600 text-white hover:bg-secondary-700">
             Request Food
           </Link>
+          <Link to="/scheduler" className="btn bg-secondary-600 text-white hover:bg-secondary-700">
+            Schedule 
+          </Link>
         </div>
       </section>
 

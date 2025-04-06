@@ -1,3 +1,4 @@
+import Scheduler from './pages/Scheduler';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
@@ -22,6 +23,7 @@ const App: React.FC = () => {
           <Route path="/recipient-form" element={<RecipientForm />} />
           <Route path="/map" element={<MapView />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/scheduler" element={< Scheduler/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
