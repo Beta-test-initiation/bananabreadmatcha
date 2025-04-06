@@ -4,7 +4,7 @@ export const donors = [
       address: '6095 Fraser St',
       longitude: 49.229350,
       latitude: -123.091058,
-      date: '2025-04-06',
+      date: '2025-04-07',
       pickupTime: "Afternoon",
     },
     {
@@ -72,10 +72,10 @@ export const donors = [
       pickupTime: '',
     },
     {
-      name: '5945 Berton Ave',
-      address: '456 Matcha Drive',
-      longitude: -123.239703,
-      latitude: 49.2549125,
+      name: 'Save-On-Foods',
+      address: '2949 Main St',
+      longitude: -123.10197552587351,
+      latitude: 49.25983114474293,
       date: '2025-04-07',
       pickupTime: '',
     }

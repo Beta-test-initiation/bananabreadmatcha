@@ -4,11 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Keep original data structures without emojis
 const recipients = [
+  'Roman Catholic Archdiocese of Vancouver',
   'CityReach Care Society',
-  'Food Bank',
-  'Shelter House',
-  'Local Soup Kitchen',
-  'Neighborhood Center',
+  'Community Builders Group',
+  'Mission Possible',
+  'Directions Youth Services',
 ];
 
 const deliveryTimes = ['Morning', 'Afternoon', 'Evening', 'Night'];

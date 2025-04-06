@@ -4,14 +4,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Donor names (for the dropdown)
 const donors = [
-  'Bob Brown',
-  'Uptown Market',
-  'Westside Cafe',
-  'Eastside Eatery',
-  'Northside Grocer',
-  'Southside Fruits',
-  'Harbor Seafood',
-  'Suburban Supply',
+  'Buy-Low Foods',
+  'Choices Markets',
+  'Whole Foods Market',
+  'Fresh Direct Produce',
+  'Fresh Point',
+  'Fresh Street Market',
+  'Mein Hardt',
+  'Pacific Fresh Produce',
+  'Stong\'s Market',
+  'Save-On-Foods'
 ];
 
 // Pickup time options
