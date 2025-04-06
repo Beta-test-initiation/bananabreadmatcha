@@ -5,7 +5,7 @@ export const recipients = [
       longitude: -123.1231580046818,
       latitude: 49.241964297554475,
       date: "2025-04-08",
-      dropoffTime: "",
+      dropoffTime: "Morning",
     },
     {
       name: "CityReach Care Society",
@@ -13,7 +13,7 @@ export const recipients = [
       longitude: -123.04906716050338,
       latitude: 49.260881620580555,
       date: "2025-04-08",
-      dropoffTime: "",
+      dropoffTime: "Afternoon",
     },
     {
       name: "Community Builders Group",
