@@ -176,7 +176,7 @@ const MapScheduler: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pb-8">
       {/* Header with title and controls */}
       <div className="bg-white shadow-md p-4">
         <div className="max-w-7xl mx-auto">
@@ -235,7 +235,8 @@ const MapScheduler: React.FC = () => {
       </div>
       
       {/* Main content area with split view */}
-      <div className="flex-1 flex flex-col md:flex-row">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+
         {/* Left side: Schedule */}
         <div className="w-full md:w-1/3 bg-gray-50 overflow-y-auto p-4">
           {selectedType === 'donor' || selectedType === 'all' ? (
