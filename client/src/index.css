@@ -11,6 +11,9 @@
 .Header-branding-logo {
   width: 100%;
 }
+.fooddash-img {
+  max-width: 25%;
+}
 
 .gm-ui-hover-effect {
   display: none !important;

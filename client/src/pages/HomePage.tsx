@@ -78,14 +78,26 @@ const HomePage = () => {
           </motion.div>
           
           <div className="relative z-10">
-            <motion.h1 
-              className="text-4xl md:text-5xl font-bold mb-4 text-green-600"
+            <motion.div
+              className="flex justify-center items-center mb-4"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
             >
-              Food Stash Optimization
-            </motion.h1>
+              <img 
+                src="/images/fooddash.png" 
+                alt="Food Dash" 
+                className="fooddash-img" 
+              />
+            </motion.div>
+            <motion.h2 
+              className="text-2xl md:text-3xl font-semibold mb-4 text-orange-600"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 15 }}
+            >
+              For Food Stash
+            </motion.h2>
             <motion.div 
               className="w-24 h-2 bg-green-400 mx-auto mb-6 rounded-full"
               initial={{ width: 0 }}
