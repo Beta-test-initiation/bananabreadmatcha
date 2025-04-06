@@ -10,7 +10,7 @@ const containerStyle = {
   height: '500px',
 };
 
-const center = {
+const warehouseLocation = {
   lat: 49.26869788991187,
   lng: -123.0979434827872, // Food Stash Warehouse
 };
@@ -35,10 +35,8 @@ const convertDonorsToLocations = (donors: ScheduledDonor[]): Location[] => {
 };
 
 const MapView: React.FC = () => {
-  // Initialize with empty array, will be populated in useEffect
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedType, setSelectedType] = useState<'all' | 'donor' | 'recipient'>('all');
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [showOptimizedRoute, setShowOptimizedRoute] = useState<boolean>(false);
   const [optimizedSchedule, setOptimizedSchedule] = useState<ScheduledDonor[]>([]);
 
@@ -50,7 +48,6 @@ const MapView: React.FC = () => {
 
   useEffect(() => {
     if (showOptimizedRoute) {
-      // Convert locations back to donor format if needed for re-optimization
       const { schedule } = getOptimizedSchedule(mockDonors);
       setOptimizedSchedule(schedule);
     }
@@ -59,14 +56,6 @@ const MapView: React.FC = () => {
   const filteredLocations = showOptimizedRoute 
     ? convertDonorsToLocations(optimizedSchedule)
     : locations.filter(location => selectedType === 'all' || location.type === selectedType);
-
-  const handleMarkerClick = (location: Location) => {
-    setSelectedLocation(location);
-  };
-
-  const handleInfoWindowClose = () => {
-    setSelectedLocation(null);
-  };
 
   const handleOptimizeRoute = () => {
     setShowOptimizedRoute(true);
@@ -81,7 +70,6 @@ const MapView: React.FC = () => {
   // Find the corresponding scheduled donor for a location (for info window)
   const findScheduledDonor = (location: Location): ScheduledDonor | undefined => {
     if (!showOptimizedRoute) return undefined;
-    
     return optimizedSchedule.find(donor => 
       donor.location.lat === location.latitude && 
       donor.location.lng === location.longitude
@@ -145,7 +133,7 @@ const MapView: React.FC = () => {
               }`}
               onClick={handleOptimizeRoute}
             >
-              Show Optimized Route
+              Show Optimized Schedule
             </button>
             {showOptimizedRoute && (
               <button
@@ -164,12 +152,12 @@ const MapView: React.FC = () => {
           <Map
             mapId={'DEMO_MAP_ID'}
             defaultZoom={13}
-            defaultCenter={center}
+            defaultCenter={warehouseLocation}
             style={containerStyle}
           >
             {/* Warehouse marker */}
             <AdvancedMarker
-              position={center}
+              position={warehouseLocation}
               title="Food Stash Warehouse"
             >
               <Pin
@@ -180,6 +168,7 @@ const MapView: React.FC = () => {
               />
             </AdvancedMarker>
             
+            {/* Location markers */}
             {filteredLocations.map((location) => {
               const scheduledDonor = findScheduledDonor(location);
               return (
@@ -187,7 +176,6 @@ const MapView: React.FC = () => {
                   key={location.id}
                   position={{ lat: location.latitude, lng: location.longitude }}
                   title={location.name}
-                  onClick={() => handleMarkerClick(location)}
                 >
                   {showOptimizedRoute && scheduledDonor ? (
                     <div className="relative">
@@ -196,9 +184,11 @@ const MapView: React.FC = () => {
                         glyphColor={'#fff'} 
                         borderColor={'#000'} 
                       />
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
-                        {scheduledDonor.order}
-                      </div>
+                      <InfoWindow
+                    position={{ lat: location.latitude, lng: location.longitude }}
+                  >
+                      <h3 className="font-bold text-lg">{scheduledDonor.order}</h3>
+                  </InfoWindow>
                     </div>
                   ) : (
                     <Pin 
@@ -207,42 +197,15 @@ const MapView: React.FC = () => {
                       borderColor={'#000'} 
                     />
                   )}
+
                 </AdvancedMarker>
               );
             })}
-            
-            {selectedLocation && (
-              <InfoWindow
-                position={{ lat: selectedLocation.latitude, lng: selectedLocation.longitude }}
-                onCloseClick={handleInfoWindowClose}
-              >
-                <div className="p-2">
-                  <h3 className="font-bold text-lg">{selectedLocation.name}</h3>
-                  
-                  {showOptimizedRoute && (
-                    <div className="mt-2">
-                      {(() => {
-                        const scheduledDonor = findScheduledDonor(selectedLocation);
-                        if (scheduledDonor) {
-                          return (
-                            <>
-                              <p className="font-semibold">Pickup Order: #{scheduledDonor.order}</p>
-                              <p>Scheduled Time: {scheduledDonor.scheduledPickup}</p>
-                              <p>Preferred Time: {scheduledDonor.pickupTime}</p>
-                            </>
-                          );
-                        }
-                        return null;
-                      })()}
-                    </div>
-                  )}
-                </div>
-              </InfoWindow>
-            )}
           </Map>
         </APIProvider>
       </div>
       
+      {/* Optional: Schedule display */}
       {showOptimizedRoute && (
         <div className="bg-white p-4 shadow-md">
           <h2 className="text-xl font-bold mb-2">Optimized Pickup Schedule</h2>
