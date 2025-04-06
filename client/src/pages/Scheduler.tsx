@@ -1,8 +1,8 @@
+// src/components/Scheduler.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getOptimizedSchedule, ScheduledDonor } from '../utils/scheduler';
-import { mockDonors } from '../utils/mockDonors';
 
 const timelineVariants = {
   hidden: { opacity: 0 },
@@ -19,8 +19,35 @@ const Scheduler: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { schedule: optimizedSchedule } = getOptimizedSchedule(mockDonors);
-    setSchedule(optimizedSchedule);
+    async function fetchDonors() {
+      try {
+        const response = await fetch('http://localhost:80/donors/');
+        console.log(response);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const donorsData = await response.json();
+        // Transform the donor data to match what getOptimizedSchedule expects:
+        // - Create a location object with numeric lat and lng.
+        // - Here we assume that "longitude" should become lat and "latitude" becomes lng.
+        const transformedDonors = donorsData.map((donor: any) => ({
+          ...donor,
+          location: {
+            lat: parseFloat(donor.longitude),
+            lng: parseFloat(donor.latitude),
+          },
+          // Optionally, ensure pickup_time is lowercase if needed by your scheduler
+          pickupTime: donor.pickup_time.toLowerCase(),
+          date: donor.date,
+        }));
+        // Generate the optimized schedule using the transformed donor data
+        const { schedule: optimizedSchedule } = getOptimizedSchedule(transformedDonors);
+        setSchedule(optimizedSchedule);
+      } catch (error) {
+        console.error('Error fetching donors:', error);
+      }
+    }
+    fetchDonors();
   }, []);
 
   return (

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Donor names (for the dropdown)
 const donors = [
-  'Downtown Deli',
+  'Bob Brown',
   'Uptown Market',
   'Westside Cafe',
   'Eastside Eatery',
@@ -35,7 +35,7 @@ const IconClock = () => (
 const DonorForm: React.FC = () => {
   const [selectedDonor, setSelectedDonor] = useState('');
   const [selectedPickup, setSelectedPickup] = useState('');
-  const [selectedDate, setSelectedDate] = useState('2025-04-10'); // Default date; you can change as needed.
+  const [selectedDate, setSelectedDate] = useState('2025-04-10'); // Default date
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -43,12 +43,9 @@ const DonorForm: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Convert donor name to an ID (using the array index + 1)
-    const donorId = donors.indexOf(selectedDonor) + 1;
-
-    // Build the payload in the desired format
+    // Build the payload using the donor name directly
     const payload = {
-      id: donorId,
+      name: selectedDonor,
       date: selectedDate,
       pickupTime: selectedPickup.toLowerCase(),
     };
@@ -62,7 +59,7 @@ const DonorForm: React.FC = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      // You can optionally process response data here
+      // Optionally process response data here
       setSubmitted(true);
     } catch (error) {
       console.error('Error updating donor:', error);
