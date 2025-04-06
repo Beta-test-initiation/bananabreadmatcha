@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+
 import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin } from '@vis.gl/react-google-maps';
+
 import { mockDonors } from '../utils/mockDonors';
 import { getOptimizedSchedule, ScheduledDonor } from '../utils/scheduler';
 
@@ -11,6 +13,7 @@ const containerStyle = {
 };
 
 const warehouseLocation = {
+
   lat: 49.26869788991187,
   lng: -123.0979434827872, // Food Stash Warehouse
 };
@@ -32,19 +35,24 @@ const convertDonorsToLocations = (donors: ScheduledDonor[]): Location[] => {
     latitude: donor.location.lat,
     longitude: donor.location.lng
   }));
+
+
 };
 
 const MapView: React.FC = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedType, setSelectedType] = useState<'all' | 'donor' | 'recipient'>('all');
+
   const [showOptimizedRoute, setShowOptimizedRoute] = useState<boolean>(false);
   const [optimizedSchedule, setOptimizedSchedule] = useState<ScheduledDonor[]>([]);
 
   // Initialize the locations on component mount
+
   useEffect(() => {
     const { schedule } = getOptimizedSchedule(mockDonors);
     setLocations(convertDonorsToLocations(schedule));
   }, []);
+
 
   useEffect(() => {
     if (showOptimizedRoute) {
@@ -53,9 +61,11 @@ const MapView: React.FC = () => {
     }
   }, [showOptimizedRoute]);
 
+
   const filteredLocations = showOptimizedRoute 
     ? convertDonorsToLocations(optimizedSchedule)
     : locations.filter(location => selectedType === 'all' || location.type === selectedType);
+
 
   const handleOptimizeRoute = () => {
     setShowOptimizedRoute(true);
@@ -67,7 +77,6 @@ const MapView: React.FC = () => {
     setSelectedType('all');
   };
 
-  // Find the corresponding scheduled donor for a location (for info window)
   const findScheduledDonor = (location: Location): ScheduledDonor | undefined => {
     if (!showOptimizedRoute) return undefined;
     return optimizedSchedule.find(donor => 
@@ -81,6 +90,7 @@ const MapView: React.FC = () => {
       <div className="bg-white shadow-md p-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold mb-4">Food Stash Map</h1>
+
           
           <div className="flex space-x-4 mb-4">
             <button
@@ -89,6 +99,7 @@ const MapView: React.FC = () => {
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
+
               onClick={() => {
                 setSelectedType('all');
                 setShowOptimizedRoute(false);
@@ -97,11 +108,13 @@ const MapView: React.FC = () => {
               All
             </button>
             <button
+
               className={`px-4 py-2 rounded-md ${
                 (selectedType === 'donor' && !showOptimizedRoute)
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
+
               onClick={() => {
                 setSelectedType('donor');
                 setShowOptimizedRoute(false);
@@ -110,11 +123,13 @@ const MapView: React.FC = () => {
               Donors
             </button>
             <button
+
               className={`px-4 py-2 rounded-md ${
                 selectedType === 'recipient' && !showOptimizedRoute
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
+
               onClick={() => {
                 setSelectedType('recipient');
                 setShowOptimizedRoute(false);
@@ -123,6 +138,7 @@ const MapView: React.FC = () => {
               Recipients
             </button>
           </div>
+
           
           <div className="flex space-x-4">
             <button
@@ -133,7 +149,7 @@ const MapView: React.FC = () => {
               }`}
               onClick={handleOptimizeRoute}
             >
-              Show Optimized Schedule
+
             </button>
             {showOptimizedRoute && (
               <button
@@ -146,13 +162,13 @@ const MapView: React.FC = () => {
           </div>
         </div>
       </div>
-      
       <div className="flex-1">
         <APIProvider apiKey={apiKey}>
           <Map
             mapId={'DEMO_MAP_ID'}
             defaultZoom={13}
             defaultCenter={warehouseLocation}
+
             style={containerStyle}
           >
             {/* Warehouse marker */}
@@ -170,6 +186,7 @@ const MapView: React.FC = () => {
             
             {/* Location markers */}
             {filteredLocations.map((location) => {
+
               const scheduledDonor = findScheduledDonor(location);
               return (
                 <AdvancedMarker
@@ -205,7 +222,6 @@ const MapView: React.FC = () => {
         </APIProvider>
       </div>
       
-      {/* Optional: Schedule display */}
       {showOptimizedRoute && (
         <div className="bg-white p-4 shadow-md">
           <h2 className="text-xl font-bold mb-2">Optimized Pickup Schedule</h2>
